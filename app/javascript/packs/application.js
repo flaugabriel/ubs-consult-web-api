@@ -15,7 +15,15 @@ ActiveStorage.start()
 
 document.addEventListener("turbolinks:load", () => {
   $(document).ready(function () {
-    initMap()
+
+    navigator.permissions.query({ name: 'geolocation' }).then(function (result) {
+      if (result.state === 'granted') {
+        navigator.geolocation.getCurrentPosition(initMap);
+      } else if (result.state === 'denied') {
+        $('#info').modal('show')
+        initMap(null)
+      }
+    });
 
     $('#search').keyup(function () {
       var nomeFiltro = $(this).val().toUpperCase();
@@ -30,37 +38,46 @@ document.addEventListener("turbolinks:load", () => {
   });
 });
 
+function initMap(position) {
+  var current_lat;
+  var current_long;
+  if (position == null) {
+    current_lat = -23.604936;
+    current_long = -46.692999;
+  } else {
+    current_lat = position.coords.latitude;
+    current_long = position.coords.longitude;
+  }
 
-
-function initMap() {
   var mapCanvas = document.getElementById('map');
+
 
   $.ajax({
     dataType: 'JSON',
     method: 'get',
-    url: 'api/v1/find_ubs?query=-23.604936,-46.692999&page=1&per_page=10',
+    url: 'api/v1/find_ubs?query=' + current_lat + ',' + current_long + '&page=1&per_page=10',
     success: function (json) {
       var infoWindow = new google.maps.InfoWindow();
 
       var mapOptions = {
-        center: new google.maps.LatLng(-23.604936, -46.692999),
+        center: new google.maps.LatLng(current_lat, current_long),
         zoom: 13,
       }
-     
+
       buildCard(json)
 
       var map = new google.maps.Map(mapCanvas, mapOptions);
       var infoWindow = new google.maps.InfoWindow();
-      
+
       var marker = new google.maps.Marker({
-        position: new google.maps.LatLng(-23.604936, -46.692999),
-        center: new google.maps.LatLng(-23.604936, -46.692999),
+        position: new google.maps.LatLng(current_lat, current_long),
+        center: new google.maps.LatLng(current_lat, current_long),
         icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
         title: "Estou aqui",
         draggable: true,
         map: map
       });
-    
+
       for (let i = 0; i < json.entries.length; i++) {
         var data = json.entries[i],
           latLng = new google.maps.LatLng(data.geocode.lat, data.geocode.long);
@@ -95,6 +112,8 @@ function initMap() {
     }
   })
 }
+
+
 
 function buildCard(data) {
   for (let index = 0; index < data.entries.length; index++) {

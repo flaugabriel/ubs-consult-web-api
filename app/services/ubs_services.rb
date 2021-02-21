@@ -22,7 +22,7 @@ class UbsServices
       collections.each do |collection|
         distance = Geocoder::Calculations.distance_between([collection[:geocode][:lat],collection[:geocode][:long]], [geocodes.first.to_f,geocodes.last.to_f])
 
-        if distance <= 5.0
+        if distance <= 15.0
           perimeter_colections.push(collection)
         end
       end
