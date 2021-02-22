@@ -6,7 +6,7 @@ Este projeto tem como finalidade desenvolver uma web api para geolocalizar unida
 
 ---
 
-- Banco de dados sqlite (não utilizado) - sem migrates
+- Banco de dados sqlite (não utilizado) - sem tabelas
 - Ruby 2.6.5
 - Rails 6.1.3
 - Comando abaixo para iniciar o projeto :
@@ -22,7 +22,7 @@ Este projeto tem como finalidade desenvolver uma web api para geolocalizar unida
 - URL de envio:
 
 ```shell
-curl --location --request GET 'http://localhost:3000/api/v1/find_ubs?query=-23.604936,-46.692999&page=1&per_page=10' \
+curl --location --request GET 'http://localhost:3000/api/v1/find_ubs?query=-23.604936,-46.692999&page=1&per_page=10' 
 ```
 - parametros
 
